@@ -1,14 +1,14 @@
 ## TinyML-Based Real-Time Tremor Detection System:
 A lightweight embedded AI system for real-time tremor detection using TinyML and multi-modal sensor fusion.
 
-#Overview:
+# Overview:
 This project presents a TinyML-based healthcare monitoring system designed for real-time detection of neurological tremors using embedded hardware.
 The system performs on-device inference using a lightweight machine learning model deployed on the ESP32 microcontroller, eliminating dependency on cloud computing and enabling low-latency monitoring.
 The project integrates motion and physiological sensing using the MPU6050 IMU sensor and MAX30102 heart rate sensor to improve reliability and provide continuous real-time monitoring.
 
 
 
-#Features:
+# Features:
 * Real-time tremor detection
 * TinyML-based on-device inference
 * Multi-modal sensor fusion
@@ -27,7 +27,7 @@ The project integrates motion and physiological sensing using the MPU6050 IMU se
 
 
 
-## Software & Tools Used:
+# Software & Tools Used:
 * Arduino IDE
 * Python
 * TensorFlow / TensorFlow Lite
