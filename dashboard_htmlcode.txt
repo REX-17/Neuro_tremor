@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Parkinson's Tremor Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.value{
+font-size:28px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.status{
+padding:6px;
+border-radius:6px;
+margin-top:10px;
+font-weight:bold;
+}
+
+.normal{
+background:#064e3b;
+}
+
+.mild{
+background:#854d0e;
+}
+
+.moderate{
+background:#b45309;
+}
+
+.severe{
+background:#7f1d1d;
+}
+
+canvas{
+background:white;
+border-radius:10px;
+padding:10px;
+}
+
+.footer{
+text-align:center;
+margin-top:15px;
+opacity:0.6;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<h1>Parkinson's Tremor Monitor</h1>
+
+
+<div class="container">
+
+<div class="card">
+Tremor %
+<div id="tremor" class="value">0</div>
+</div>
+
+
+<div class="card">
+Heart Rate (BPM)
+<div id="hr" class="value">0</div>
+</div>
+
+
+<div class="card">
+Combined Severity %
+<div id="combined" class="value">0</div>
+</div>
+
+
+<div class="card">
+ML Severity %
+<div id="mlsev" class="value">0</div>
+</div>
+
+
+<div class="card">
+Condition
+<div id="label" class="value status normal">Normal</div>
+</div>
+
+
+<div class="card">
+LED Status
+<div id="led" class="value">GREEN</div>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<canvas id="chart"></canvas>
+
+</div>
+
+
+<div class="footer">
+
+TinyML Parkinson's Detection System
+
+</div>
+
+
+
+<script>
+
+const ws = new WebSocket("ws://localhost:8765");
+
+
+const tremorEl = document.getElementById("tremor");
+
+const hrEl = document.getElementById("hr");
+
+const combinedEl = document.getElementById("combined");
+
+const mlsevEl = document.getElementById("mlsev");
+
+const labelEl = document.getElementById("label");
+
+const ledEl = document.getElementById("led");
+
+
+
+const ctx = document.getElementById("chart");
+
+
+const chart = new Chart(ctx,{
+
+type:'line',
+
+data:{
+
+labels:[],
+
+datasets:[
+
+{
+
+label:'Combined Severity',
+
+data:[],
+
+borderWidth:2
+
+},
+
+{
+
+label:'Heart Rate',
+
+data:[],
+
+borderWidth:2
+
+}
+
+]
+
+},
+
+options:{
+
+animation:false,
+
+responsive:true,
+
+scales:{
+
+y:{
+
+beginAtZero:true
+
+}
+
+}
+
+}
+
+});
+
+
+
+ws.onmessage = function(event){
+
+let data = JSON.parse(event.data);
+
+
+tremorEl.innerText = data.tremor_pct.toFixed(1);
+
+hrEl.innerText = data.hr_bpm.toFixed(1);
+
+combinedEl.innerText = data.combined_pct.toFixed(1);
+
+mlsevEl.innerText = data.ml_severity.toFixed(1);
+
+labelEl.innerText = data.ml_label;
+
+ledEl.innerText = data.led_state;
+
+
+updateStatusColor(data.ml_label);
+
+updateChart(data);
+
+};
+
+
+
+function updateStatusColor(label){
+
+labelEl.className="value status";
+
+
+if(label=="Normal")
+
+labelEl.classList.add("normal");
+
+
+else if(label=="Mild")
+
+labelEl.classList.add("mild");
+
+
+else if(label=="Moderate")
+
+labelEl.classList.add("moderate");
+
+
+else
+
+labelEl.classList.add("severe");
+
+}
+
+
+
+function updateChart(data){
+
+chart.data.labels.push("");
+
+
+chart.data.datasets[0].data.push(data.combined_pct);
+
+chart.data.datasets[1].data.push(data.hr_bpm);
+
+
+if(chart.data.labels.length>40){
+
+chart.data.labels.shift();
+
+chart.data.datasets.forEach(d=>d.data.shift());
+
+}
+
+
+chart.update();
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
