@@ -67,28 +67,3 @@ The implementation shows that TinyML can be effectively used for portable health
 
 
 
-# Project Structure
-tinyml-tremor-detection/
-│
-├── README.md
-├── Final_Report.pdf
-│
-├── firmware/
-│   └── esp32_firmware.ino
-│
-├── model/
-│   └── model.tflite
-│
-├── scripts/
-│   ├── training_script.py
-│   ├── preprocessing_script.py
-│   └── dashboard_script.py
-│
-├── images/
-│   ├── hardware_setup.jpg
-│   ├── dashboard_output.png
-│   ├── demo_image.jpg
-│   └── block_diagram.png
-│
-└── dataset/
-    └── sample_dataset.csv
